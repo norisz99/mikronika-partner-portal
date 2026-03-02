@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Portál - Mikronika PC</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        body { 
+            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #111; color: #fff; height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+        }
+        .login-box { 
+            background: #222; padding: 40px; border-radius: 10px; 
+            box-shadow: 0 0 30px rgba(215, 14, 2, 0.3); /* Mikronika Piros */
+            border: 2px solid #444; width: 320px; text-align: center; 
+        }
+        h2 { color: #d70e02; margin-bottom: 5px; margin-top: 0; text-transform: uppercase; letter-spacing: 2px; }
+        p { color: #888; font-size: 13px; margin-bottom: 25px; }
+        
+        input { 
+            width: 100%; padding: 12px; margin: 8px 0; 
+            background: #333; border: 1px solid #555; color: white; 
+            border-radius: 5px; box-sizing: border-box; font-size: 16px;
+        }
+        input:focus { outline: 2px solid #d70e02; border-color: #d70e02; }
+        
+        button { 
+            width: 100%; padding: 12px; background: #d70e02; color: white; 
+            border: none; font-weight: bold; border-radius: 5px; cursor: pointer; 
+            margin-top: 15px; transition: 0.3s; font-size: 16px; text-transform: uppercase;
+        }
+        button:hover { background: #b00000; transform: scale(1.02); }
+        
+        .error { 
+            background: rgba(255, 0, 0, 0.2); color: #ff6666; 
+            padding: 10px; border-radius: 5px; font-size: 13px; 
+            margin-top: 15px; display: none; border: 1px solid #ff0000;
+        }
+        
+        .home-link { display: block; margin-top: 20px; color: #666; text-decoration: none; font-size: 12px; transition: 0.3s; }
+        .home-link:hover { color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2>🔐 Partner Portál</h2>
+    <p>Mikronika PC - Hozzáférés Partnereknek</p>
+    
+    <form onsubmit="handleLogin(event)">
+        <input type="text" id="username" placeholder="Felhasználónév" required>
+        <input type="password" id="password" placeholder="Jelszó" required>
+        
+        <button type="submit">BELÉPÉS</button>
+        
+        <div id="error-msg" class="error"></div>
+    </form>
+    
+    <a href="index.html" class="home-link">◄ Vissza a publikus oldalra</a>
+</div>
+
+<script>
+    async function handleLogin(e) {
+        e.preventDefault(); // Megakadályozzuk az oldal újratöltését
+        
+        var userInput = document.getElementById("username").value;
+        var passInput = document.getElementById("password").value;
+        var errorBox = document.getElementById("error-msg");
+
+        // 1. KLIENS OLDALI BIZTONSÁG
+        var safePattern = /^[a-zA-Z0-9_]+$/;
+
+        if (!safePattern.test(userInput)) {
+            errorBox.style.display = "block";
+            errorBox.innerText = "⚠️ HIBA: A felhasználónév tiltott karaktereket tartalmaz!";
+            return;
+        }
+
+        // 2. KÜLDÉS A PHP SZERVERNEK
+        try {
+            // FONTOS: Itt írtuk át api_login.php-ra!
+            const response = await fetch('api_login.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: userInput, password: passInput })
+            });
+
+            // Ellenőrizzük, hogy a válasz valid JSON-e
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("A szerver nem JSON választ küldött (Lehet PHP hiba?)");
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                // SIKER! Átirányítás a vezérlőpultra
+                window.location.href = "admin_dashboard.html";
+            } else {
+                // HIBA (Rossz jelszó, stb.)
+                errorBox.style.display = "block";
+                errorBox.innerText = "❌ " + (data.message || "Hibás adatok!");
+            }
+        } catch (err) {
+            console.error(err);
+            errorBox.style.display = "block";
+            errorBox.innerText = "🔌 Kommunikációs hiba a szerverrel!";
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue - Switches - Mikronika PC</title>
+    <style>
+        /* --- DESIGN (V3.0) --- */
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); background-attachment: fixed; color: #333; min-height: 100vh; }
+        #wrapper { width: 1200px; max-width: 98%; margin: 20px auto; background-color: #f0f0f0; border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.5); overflow: hidden; }
+        #header { background: #fff; padding: 15px; text-align: center; border-bottom: 4px solid #d70e02; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .logo-img { max-width: 400px; height: auto; }
+        #nav { margin-top: 5px; font-weight: bold; font-size: 20px; text-transform: uppercase; background: #eee; padding: 10px 30px; border-radius: 20px; }
+        #nav a { color: #d70e02; text-decoration: none; padding: 0 15px; }
+        #nav a:hover { color: #000; text-decoration: underline; }
+        #inner { display: flex; flex-wrap: wrap; align-items: flex-start; }
+        
+        #browse { flex: 0 0 260px; background: #222; color: white; padding: 20px; border-right: 4px solid #d70e02; min-height: 100vh; }
+        @media (max-width: 800px) { #browse { flex: 0 0 100%; min-height: auto; border-right: none; border-bottom: 4px solid #d70e02; } #inner { flex-direction: column; } }
+        #browse dt { font-size: 18px; font-weight: bold; color: #fff; background: #d70e02; padding: 10px; margin-bottom: 5px; margin-top: 20px; text-transform: uppercase; text-align: center; border-radius: 4px; }
+        #browse dt:first-child { margin-top: 0; }
+        #browse dd a { display: block; color: #ccc; text-decoration: none; padding: 10px 15px; background: #333; border-bottom: 1px solid #444; transition: 0.3s; font-size: 15px; }
+        #browse dd a:hover { background-color: #444; color: white; border-left: 5px solid #d70e02; padding-left: 10px; }
+        
+        /* EXTRA BUTTONS STYLES */
+        .sidebar-btn { display: block; color: white; font-weight: bold; text-decoration: none; padding: 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); text-align: center; margin-bottom: 15px; transition: 0.3s; }
+        .btn-led { background: linear-gradient(45deg, #d70e02, #ff4500); box-shadow: 0 0 10px rgba(255, 69, 0, 0.4); animation: pulse 3s infinite; }
+        .btn-quote { background: linear-gradient(45deg, #005c97, #363795); box-shadow: 0 0 10px rgba(0, 92, 151, 0.4); }
+        .btn-quote:hover, .btn-led:hover { transform: scale(1.05); filter: brightness(1.1); }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.02);} 100% {transform: scale(1);} }
+
+        .searchform { margin-top: 20px; padding: 15px; background: #fff; border-radius: 4px; }
+        .searchform input { width: 90%; padding: 8px; margin-bottom: 5px; border: 2px solid #d70e02; }
+        .search-btn { width: 100%; padding: 8px; background: #d70e02; color: white; border: none; cursor: pointer; font-weight: bold; }
+
+        #body { flex: 1; padding: 20px; background-color: #e6e6e6; }
+        .inner { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .product-card { background: white; border: 1px solid #ccc; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card:hover { transform: translateY(-5px); border-color: #d70e02; }
+        .zoomable { max-width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; cursor: zoom-in; transition: opacity 0.3s; }
+        .zoomable:hover { opacity: 0.8; }
+        .highlight-card { background-color: #fff9c4 !important; border: 2px solid #d70e02 !important; box-shadow: 0 0 20px rgba(215, 14, 2, 0.5) !important; transform: scale(1.05); }
+
+        h3 { color: #333; margin: 10px 0; font-size: 18px; min-height: 40px; }
+        p { font-size: 14px; color: #666; margin: 5px 0; }
+        .readmore a { display: inline-block; background: #d70e02; color: white; text-decoration: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .readmore a:hover { background: #b00000; }
+
+        #imageModal { display: none; position: fixed; z-index: 9999; padding-top: 30px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.95); backdrop-filter: blur(5px); }
+        .modal-content { margin: auto; display: block; max-width: 95vw; max-height: 95vh; width: auto; height: auto; border: 2px solid #fff; box-shadow: 0 0 30px #000; animation: zoom 0.3s; }
+        @keyframes zoom { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
+        .close { position: absolute; top: 20px; right: 40px; color: #fff; font-size: 50px; font-weight: bold; cursor: pointer; z-index: 10001; }
+        .close:hover { color: #d70e02; }
+        #caption { margin: auto; display: block; width: 80%; text-align: center; color: #fff; padding: 10px 0; font-size: 20px; font-weight:bold; }
+    </style>
+</head>
+<body>
+
+<div id="imageModal"><span class="close" onclick="closeModal()">&times;</span><img class="modal-content" id="img01"><div id="caption"></div></div>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        
+        <div id="nav">
+            <a href="MainPage.html">Home</a> | 
+            <a href="Catalogue.html">Catalogue</a> |
+            <a href="Knowledge.html">Knowledge</a> |
+            <a href="Contact.html">Contact</a>
+        </div>
+        
+        <img src="images/Szakuzlet.jpg" alt="Shop" style="border-radius: 4px; border: 1px solid #ccc; max-width: 800px;">
+    </div>
+
+    <div id="inner">
+        <dl id="browse">
+            <dt><a href="MainPage.html" style="color:white; text-decoration:none;">◄ Back to Home</a></dt>
+            
+            <dt style="background:#444; margin-top:20px;">Useful Tools</dt>
+            <dd style="background:#333; padding:15px;">
+                
+                <p style="color:#ccc; font-size:13px; margin:0 0 5px 0;">Resistor value needed?</p>
+                <a href="Knowledge.html" class="sidebar-btn btn-led">
+                    ⚡ LED Calculator
+                </a>
+
+                <p style="color:#ccc; font-size:13px; margin:10px 0 5px 0;">Bulk order?</p>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=info@mikronika.hu&su=Quote Request - Mikronika PC&body=Dear Mikronika Team,%0A%0AI would like to request a quote for the following products:%0A..." 
+                   target="_blank" 
+                   class="sidebar-btn btn-quote">
+                   ✉️ Request Quote (Gmail)
+                </a>
+            </dd>
+
+            <dt>Categories</dt>
+            <dd><a href="Catalogue.html" style="background:#d70e02; color:white; border-left:5px solid #fff;">Switches</a></dd>
+            <dd><a href="fejlesztoeszkozok.html">Development Tools</a></dd>
+            <dd><a href="relek.html">Relays & Sockets</a></dd>
+            <dd><a href="ledek.html">LEDs & Displays</a></dd>
+            <dd><a href="forrasztas.html">Soldering Tech</a></dd>
+            <dd><a href="nyakok.html">PCBs</a></dd>
+            <dd><a href="kabelek.html">Cables & Wires</a></dd>
+            <dd><a href="szigetelo.html">Insulation</a></dd>
+            <dd><a href="passziv.html">Passive Components</a></dd>
+            <dd><a href="felvezetok.html">Semiconductors</a></dd>
+            
+            <dt>Quick Search</dt>
+            <dd class="searchform">
+                <input id="search-input" type="text" placeholder="e.g. Rocker switch..." onkeypress="handleEnter(event)">
+                <button type="button" class="search-btn" onclick="searchProduct()">SEARCH</button>
+            </dd>
+        </dl>
+
+        <div id="body">
+            <div class="inner">
+                <div class="product-card">
+                    <h3>IRS-101</h3>
+                    <img src="images/kapcsolok_01.jpg" data-fullsize="images nagy/IRS-101.jpg" alt="IRS-101" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 1-pole, illuminated.</p>
+                    <p><b>250V 15 A</b></p>
+                    <p class="readmore"><a href="IRS-101.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>HB110 Series</h3>
+                    <img src="images/kapcsolok_02.jpg" data-fullsize="images nagy/HB110.jpg" alt="HB110" class="zoomable" onclick="openModal(this)">
+                    <p>Illuminated Rocker (Red/Green).</p>
+                    <p><b>250V 16 A</b></p>
+                    <p class="readmore"><a href="HB110.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>R13-91</h3>
+                    <img src="images/kapcsolok_03.jpg" data-fullsize="images nagy/R13-91.jpg" alt="R13-91" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 1-pole, 3 positions.</p>
+                    <p><b>250V 10 A</b></p>
+                    <p class="readmore"><a href="R13-91.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>KN 3-202</h3>
+                    <img src="images/kapcsolo_04.jpg" data-fullsize="images nagy/KN 3-202.jpg" alt="KN 3-202" class="zoomable" onclick="openModal(this)">
+                    <p>Toggle switch, 2-pole, screw term.</p>
+                    <p><b>250V 10 A</b></p>
+                    <p class="readmore"><a href="KN%203-202.html">Details</a></p>
+                </div>
+                
+                <div class="product-card">
+                    <h3>KN3-203</h3>
+                    <img src="images/kapcsolo_05.jpg" data-fullsize="images nagy/KN3-203.jpg" alt="KN3-203" class="zoomable" onclick="openModal(this)">
+                    <p>Toggle switch, 2-pole, 3 positions.</p>
+                    <p><b>250V 10A (Industrial)</b></p>
+                    <p class="readmore"><a href="KN3-203.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>KN3-102</h3>
+                    <img src="images/kapcsolok_06.jpg" data-fullsize="images nagy/KN3-102.jpg" alt="KN3-102" class="zoomable" onclick="openModal(this)">
+                    <p>Toggle switch, 1-pole, 2 positions.</p>
+                    <p><b>250V 10A</b></p>
+                    <p class="readmore"><a href="KN3-102.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>KN3-103</h3>
+                    <img src="images/kapcsolok_07.jpg" data-fullsize="images nagy/KN3-103.jpg" alt="KN3-103" class="zoomable" onclick="openModal(this)">
+                    <p>Toggle switch, 1-pole, 3 positions.</p>
+                    <p><b>250V 10A</b></p>
+                    <p class="readmore"><a href="KN3-103.html">Details</a></p>
+                </div>
+                
+                <div class="product-card">
+                    <h3>R13-416</h3>
+                    <img src="images/kapcsolo_08.jpg" data-fullsize="images nagy/R13-416.jpg" alt="R13-416" class="zoomable" onclick="openModal(this)">
+                    <p>Toggle switch, 1-pole, blade term.</p>
+                    <p><b>250V 6A</b></p>
+                    <p class="readmore"><a href="R13-416.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>R13-416 (3)</h3>
+                    <img src="images/kapcsolo_09.jpg" data-fullsize="images nagy/R13-416(3).jpg" alt="R13-416-3" class="zoomable" onclick="openModal(this)">
+                    <p>Toggle switch, 1-pole, 3 pos, blade.</p>
+                    <p><b>250V 6A</b></p>
+                    <p class="readmore"><a href="R13-416%283%29.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>R13-90P</h3>
+                    <img src="images/kapcsolo_11.jpg" data-fullsize="images nagy/R13-90P.jpg" alt="R13-90P" class="zoomable" onclick="openModal(this)">
+                    <p>Illuminated Rocker, 2-pole.</p>
+                    <p><b>250V 10A (Red)</b></p>
+                    <p class="readmore"><a href="R13-90P.html">Details</a></p>
+                </div>
+                
+                <div class="product-card">
+                    <h3>STV-01 / 02</h3>
+                    <img src="images/kapcsolo_10.jpg" data-fullsize="images nagy/STV-01,STV-02.jpg" alt="STV" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 2-pole, illuminated.</p>
+                    <p><b>250V 15A</b></p>
+                    <p class="readmore"><a href="STV-01,STV-02.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Kbm-26</h3>
+                    <img src="images/kapcsolo_12.jpg" data-fullsize="images nagy/Kbm-26.jpg" alt="Kbm-26" class="zoomable" onclick="openModal(this)">
+                    <p>Push button (Toggle style).</p>
+                    <p><b>250V 6A</b></p>
+                    <p class="readmore"><a href="Kbm-26.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>IRS-201</h3>
+                    <img src="images/kapcsolo_13.jpg" data-fullsize="images nagy/IRS-201.jpg" alt="IRS-201" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 2-pole, 3 positions.</p>
+                    <p><b>250V 15A</b></p>
+                    <p class="readmore"><a href="IRS-201.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>AE-H8800</h3>
+                    <img src="images/kapcsolo_14.jpg" data-fullsize="images nagy/AE-H8800VAAAB.jpg" alt="AE-H8800" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 1-pole, 2 positions.</p>
+                    <p><b>250V 10A</b></p>
+                    <p class="readmore"><a href="AE-H8800VAAAB.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>IRS-2</h3>
+                    <img src="images/kapcsolo_15.jpg" data-fullsize="images nagy/IRS-2.jpg" alt="IRS-2" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 2-pole, 2 positions.</p>
+                    <p><b>250V 15A</b></p>
+                    <p class="readmore"><a href="IRS-2.html">Details</a></p>
+                </div>
+                
+                <div class="product-card">
+                    <h3>AE-H8650</h3>
+                    <img src="images/kapcsolo_16.jpg" data-fullsize="images nagy/AE-H8650VBAAG.jpg" alt="AE-H8650" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 2-pole, 2 positions.</p>
+                    <p><b>250V 10A</b></p>
+                    <p class="readmore"><a href="AE-H8650VBAAG.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>ST1/3</h3>
+                    <img src="images/kapcsolo_17.jpg" data-fullsize="images nagy/ST1 3.jpg" alt="ST1/3" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch, 1-pole, 3 positions.</p>
+                    <p><b>250V 3A</b></p>
+                    <p class="readmore"><a href="ST13.html">Details</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>R13-117</h3>
+                    <img src="images/kapcsolo_18.jpg" data-fullsize="images nagy/R13-117.jpg" alt="R13-117" class="zoomable" onclick="openModal(this)">
+                    <p>Illuminated Rocker, 2-pole.</p>
+                    <p><b>Light: 250V~</b></p>
+                    <p class="readmore"><a href="R13-117.html">Details</a></p>
+                </div>
+
+                 <div class="product-card">
+                    <h3>AK61</h3>
+                    <img src="images/kapcsolo_19.jpg" data-fullsize="images nagy/AK61.jpg" alt="AK61" class="zoomable" onclick="openModal(this)">
+                    <p>Window lifter switch, 5-pin.</p>
+                    <p><b>12V DC / 20A</b></p>
+                    <p class="readmore"><a href="AK61.html">Details</a></p>
+                </div>
+
+                 <div class="product-card">
+                    <h3>STV-10</h3>
+                    <img src="images/kapcsolo_20.jpg" data-fullsize="images nagy/STV-10.jpg" alt="STV-10" class="zoomable" onclick="openModal(this)">
+                    <p>Rocker switch with LED.</p>
+                    <p><b>14V DC / 20A</b></p>
+                    <p class="readmore"><a href="STV-10.html">Details</a></p>
+                </div>
+
+            </div> 
+        </div> 
+    </div> 
+</div> 
+
+<script>
+    function openModal(element) { var modal = document.getElementById("imageModal"); var modalImg = document.getElementById("img01"); var captionText = document.getElementById("caption"); modal.style.display = "block"; var fullSizeSrc = element.getAttribute('data-fullsize') || element.src; modalImg.src = fullSizeSrc; captionText.innerHTML = element.alt; }
+    function closeModal() { document.getElementById("imageModal").style.display = "none"; }
+    window.onclick = function(event) { if (event.target == document.getElementById("imageModal")) closeModal(); }
+    function handleEnter(e) { if(e.keyCode === 13){ e.preventDefault(); searchProduct(); } }
+    function searchProduct() { var input = document.getElementById("search-input").value.toLowerCase(); if (input === "") { alert("Please enter a search term!"); return; } var cards = document.getElementsByClassName("product-card"); var count = 0; var firstMatch = null; for (var i = 0; i < cards.length; i++) cards[i].classList.remove("highlight-card"); for (var i = 0; i < cards.length; i++) { var card = cards[i]; var text = card.innerText.toLowerCase(); if (text.includes(input)) { card.classList.add("highlight-card"); count++; if (firstMatch === null) firstMatch = card; } } if (count > 0) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' }); else alert("No product found."); }
+</script>
+
+</body>
+</html>

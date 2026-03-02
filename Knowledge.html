@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - LED Calculator - Mikronika PC</title>
+    <style>
+        /* --- PROFI STÍLUS (SÖTÉT TÉMA) --- */
+        body { 
+            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%); 
+            background-attachment: fixed; color: #fff; min-height: 100vh; 
+        }
+        #wrapper { width: 1200px; max-width: 98%; margin: 20px auto; background-color: #222; box-shadow: 0 0 30px rgba(0,0,0,0.8); border-radius: 10px; overflow: hidden; border: 2px solid #444; }
+        
+        #header { padding: 20px; text-align: center; border-bottom: 5px solid #d70e02; background: #fff; }
+        .logo-img { max-width: 300px; }
+        
+        /* NAVIGÁCIÓ */
+        #nav { margin-top: 15px; font-weight: bold; font-size: 18px; text-transform: uppercase; background: #eee; padding: 12px; border-radius: 50px; display: inline-block; }
+        #nav a { color: #555; text-decoration: none; padding: 0 20px; transition: 0.3s; }
+        #nav a:hover, #nav a.active { color: #d70e02; }
+
+        /* KALKULÁTOR DOBOZOK */
+        .game-board { padding: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; align-items: flex-start; }
+        .control-panel { background: #333; padding: 30px; border-radius: 15px; border: 2px solid #555; box-shadow: 0 10px 20px rgba(0,0,0,0.5); width: 350px; }
+        .control-panel h2 { color: #d70e02; margin-top: 0; text-align: center; text-transform: uppercase; }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #ccc; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 18px; font-weight: bold; box-sizing: border-box; }
+        .input-group input:focus { outline: 3px solid #d70e02; }
+        
+        .calc-btn { width: 100%; padding: 15px; background: #d70e02; color: white; border: none; font-size: 20px; font-weight: bold; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #900; }
+        .calc-btn:active { transform: translateY(5px); box-shadow: none; }
+
+        .result-panel { background: #2a2a2a; padding: 30px; border-radius: 15px; border: 2px solid #555; width: 500px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .display-screen { background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 8px; border: 4px solid #666; width: 90%; margin-bottom: 20px; text-align: left; font-size: 16px; line-height: 1.5; box-shadow: inset 0 0 10px rgba(0,255,0,0.2); }
+        .display-value { font-size: 24px; font-weight: bold; color: #fff; }
+        .warning { color: red; font-weight: bold; animation: blink 0.5s infinite; }
+
+        /* GRAFIKÁK */
+        .led-graphic { width: 60px; height: 60px; border-radius: 50%; background-color: #333; margin: 20px auto; border: 4px solid #555; box-shadow: 0 0 5px #000; transition: 0.5s; }
+        .led-on { box-shadow: 0 0 30px currentColor, inset 0 0 20px rgba(255,255,255,0.8); background-color: currentColor; border-color: #fff; }
+
+        .resistor-graphic { width: 200px; height: 50px; background: #e0c9a6; border-radius: 25px; margin: 20px auto; position: relative; box-shadow: 2px 5px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; border: 2px solid #8f7d63; }
+        .resistor-graphic::before, .resistor-graphic::after { content: ''; position: absolute; width: 40px; height: 4px; background: #bbb; z-index: -1; }
+        .resistor-graphic::before { left: -38px; } .resistor-graphic::after { right: -38px; }
+        .band { width: 12px; height: 100%; margin: 0 8px; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .footer-link { margin-top: 20px; color: #aaa; text-decoration: none; display: block; }
+        .footer-link:hover { color: #fff; }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        
+        <div id="nav">
+            <a href="MainPage.html">Home</a> | 
+            <a href="Catalogue.html">Catalogue</a> | 
+            <a href="Knowledge.html" class="active">Knowledge</a> |
+            <a href="Contact.html">Contact</a>
+        </div>
+    </div>
+
+    <div class="game-board">
+        <div class="control-panel">
+            <h2>⚡ LED Savior</h2>
+            <p style="text-align:center; color:#888; margin-bottom:20px;">Don't burn it! Calculate it!</p>
+
+            <div class="input-group">
+                <label>1. Supply Voltage (V)</label>
+                <input type="number" id="voltage" placeholder="e.g. 5, 9, 12" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label>2. LED Color</label>
+                <select id="ledColor" onchange="updateLedGraphic()">
+                    <option value="1.8|#ff0000">🔴 Red (1.8V)</option>
+                    <option value="2.0|#ffa500">🟠 Orange (2.0V)</option>
+                    <option value="2.2|#ffff00">🟡 Yellow (2.2V)</option>
+                    <option value="3.2|#00ff00">🟢 Green (3.2V)</option>
+                    <option value="3.2|#0000ff">🔵 Blue (3.2V)</option>
+                    <option value="3.4|#ffffff">⚪ White (3.4V)</option>
+                    <option value="custom|#cccccc">🔧 Custom Voltage...</option>
+                </select>
+            </div>
+            
+            <div class="input-group" id="customVoltGroup" style="display:none;">
+                <label>LED Forward Voltage (V)</label>
+                <input type="number" id="ledFwdVolt" value="2.0" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label>3. LED Current (mA)</label>
+                <input type="number" id="current" value="20">
+            </div>
+
+            <button class="calc-btn" onclick="calculate()">CALCULATE! 🚀</button>
+        </div>
+
+        <div class="result-panel">
+            <div id="visualLed" class="led-graphic"></div>
+            <div class="display-screen" id="display">
+                <span style="color:#666;">// Waiting for input...</span><br><br>Enter voltage & color!
+            </div>
+            <div id="visualResistor" class="resistor-graphic" style="display:none;">
+                <div class="band" style="background:brown;"></div>
+                <div class="band" style="background:black;"></div>
+                <div class="band" style="background:red;"></div>
+                <div class="band" style="background:gold;"></div>
+            </div>
+            <p id="resistorText" style="display:none; color:#ccc;">Required Resistor (Standard E24)</p>
+            <a href="Catalogue.html" class="footer-link">◄ Value found? Go to Shop!</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateLedGraphic() {
+        var select = document.getElementById('ledColor');
+        var value = select.value.split('|');
+        var led = document.getElementById('visualLed');
+        led.style.color = value[1];
+        if(value[0] === 'custom') document.getElementById('customVoltGroup').style.display = 'block';
+        else document.getElementById('customVoltGroup').style.display = 'none';
+    }
+    function calculate() {
+        var vSource = parseFloat(document.getElementById('voltage').value);
+        var select = document.getElementById('ledColor').value.split('|');
+        var vLed = (select[0] === 'custom') ? parseFloat(document.getElementById('ledFwdVolt').value) : parseFloat(select[0]);
+        var iLed_mA = parseFloat(document.getElementById('current').value);
+        var display = document.getElementById('display');
+        var led = document.getElementById('visualLed');
+        var resistorG = document.getElementById('visualResistor');
+        var resText = document.getElementById('resistorText');
+
+        // ANGOL HIBÁK
+        if (!vSource || isNaN(vLed) || !iLed_mA) { display.innerHTML = "<span class='warning'>ERROR: Please fill all fields!</span>"; led.className = "led-graphic"; resistorG.style.display = "none"; return; }
+        if (vSource <= vLed) { display.innerHTML = "<span class='warning'>⚠ Voltage too low!</span><br>Min required: " + vLed + "V"; led.className = "led-graphic"; resistorG.style.display = "none"; return; }
+
+        var resistance = (vSource - vLed) / (iLed_mA / 1000);
+        var powerW = (iLed_mA/1000) * (iLed_mA/1000) * resistance;
+        var stdR = getStandardResistor(resistance);
+
+        // ANGOL EREDMÉNYEK
+        var resultHTML = "Source: " + vSource + "V | LED: " + vLed + "V<br>";
+        resultHTML += "Calculated: " + Math.round(resistance) + " Ω<br>";
+        resultHTML += "<br>RECOMMENDED RESISTOR:<br><span class='display-value' style='color:cyan; font-size:32px;'>" + stdR + " Ω</span><br>";
+        
+        if (powerW > 0.25) resultHTML += "<br><span class='warning'>⚠ WARNING: " + powerW.toFixed(2) + "W!</span><br>Use at least 0.5W resistor!";
+        else resultHTML += "<small style='color:#0f0'>Power Dissipation: " + powerW.toFixed(2) + "W (OK)</small>";
+
+        display.innerHTML = resultHTML;
+        led.className = "led-graphic led-on"; resistorG.style.display = "flex"; resText.style.display = "block";
+    }
+    function getStandardResistor(val) {
+        var e24 = [10, 12, 15, 18, 22, 27, 33, 39, 47, 51, 56, 62, 68, 75, 82, 100, 120, 150, 180, 200, 220, 240, 270, 300, 330, 360, 390, 430, 470, 510, 560, 620, 680, 750, 820, 910, 1000];
+        for (var i = 0; i < e24.length; i++) { if (e24[i] >= val) return e24[i]; }
+        if(val > 1000) return (Math.ceil(val/100)*100); 
+        return Math.round(val);
+    }
+    updateLedGraphic();
+</script>
+</body>
+</html>

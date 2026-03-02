@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tudástár - Kalkulátorok - Mikronika PC</title>
+    <style>
+        /* --- DESIGN (SÖTÉT TÉMA) --- */
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%); background-attachment: fixed; color: #fff; min-height: 100vh; }
+        #wrapper { width: 1200px; max-width: 98%; margin: 20px auto; background-color: #222; box-shadow: 0 0 30px rgba(0,0,0,0.8); border-radius: 10px; overflow: hidden; border: 2px solid #444; }
+        #header { padding: 20px; text-align: center; border-bottom: 5px solid #d70e02; background: #fff; }
+        .logo-img { max-width: 300px; }
+        #nav { margin-top: 15px; font-weight: bold; font-size: 18px; text-transform: uppercase; background: #eee; padding: 12px; border-radius: 50px; display: inline-block; }
+        #nav a { color: #555; text-decoration: none; padding: 0 20px; transition: 0.3s; }
+        #nav a:hover, #nav a.active { color: #d70e02; }
+
+        /* TAB VÁLTÓ GOMBOK */
+        .tab-container { text-align: center; margin-top: 30px; }
+        .tab-btn { background: #333; color: #ccc; border: 2px solid #555; padding: 15px 30px; font-size: 20px; cursor: pointer; border-radius: 10px 10px 0 0; border-bottom: none; margin: 0 5px; transition: 0.3s; }
+        .tab-btn:hover { background: #444; color: #fff; }
+        .tab-btn.active { background: #d70e02; color: #fff; border-color: #d70e02; transform: translateY(2px); }
+
+        /* ESZKÖZ DOBOZOK */
+        .tool-section { display: none; padding: 40px; justify-content: center; gap: 40px; flex-wrap: wrap; border-top: 4px solid #d70e02; background: #252525; }
+        .tool-section.active { display: flex; }
+
+        .control-panel { background: #333; padding: 30px; border-radius: 15px; border: 2px solid #555; box-shadow: 0 10px 20px rgba(0,0,0,0.5); width: 350px; }
+        .control-panel h2 { color: #d70e02; margin-top: 0; text-align: center; text-transform: uppercase; border-bottom: 1px solid #555; padding-bottom: 15px; }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #ccc; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 18px; font-weight: bold; box-sizing: border-box; }
+        
+        .calc-btn { width: 100%; padding: 15px; background: #d70e02; color: white; border: none; font-size: 20px; font-weight: bold; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #900; }
+        .calc-btn:active { transform: translateY(5px); box-shadow: none; }
+
+        .result-panel { background: #2a2a2a; padding: 30px; border-radius: 15px; border: 2px solid #555; width: 500px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .display-screen { background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 8px; border: 4px solid #666; width: 90%; margin-bottom: 20px; text-align: left; font-size: 18px; line-height: 1.5; box-shadow: inset 0 0 10px rgba(0,255,0,0.2); }
+        .display-value { font-size: 28px; font-weight: bold; color: #fff; }
+        .warning { color: red; font-weight: bold; animation: blink 0.5s infinite; }
+
+        /* LED GRAFIKA */
+        .led-graphic { width: 60px; height: 60px; border-radius: 50%; background-color: #333; margin: 20px auto; border: 4px solid #555; box-shadow: 0 0 5px #000; transition: 0.5s; }
+        .led-on { box-shadow: 0 0 30px currentColor, inset 0 0 20px rgba(255,255,255,0.8); background-color: currentColor; border-color: #fff; }
+        
+        /* ELLENÁLLÁS GRAFIKA */
+        .resistor-graphic { width: 200px; height: 50px; background: #e0c9a6; border-radius: 25px; margin: 20px auto; position: relative; box-shadow: 2px 5px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; border: 2px solid #8f7d63; }
+        .band { width: 12px; height: 100%; margin: 0 8px; }
+
+        /* OHM GRAFIKA (Háromszög) */
+        .ohm-triangle { 
+            width: 200px; height: 180px; position: relative; margin: 0 auto; 
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Ohm%27s_Law_Triangle.svg/1200px-Ohm%27s_Law_Triangle.svg.png') no-repeat center center; 
+            background-size: contain; filter: invert(1); opacity: 0.3; transition: 0.5s; 
+        }
+        .ohm-active { opacity: 1; filter: invert(1) drop-shadow(0 0 15px #00aaff); }
+
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Favicon link (ha már megvan) */
+        /* <link rel="icon" type="image/png" href="images/favicon.png"> */
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        <div id="nav">
+            <a href="index.html">Főoldal</a> | 
+            <a href="katalogus.html">Katalógus</a> | 
+            <a href="tudastar.html" class="active">Tudástár</a> |
+            <a href="P=2.html">Kapcsolatok</a>
+        </div>
+    </div>
+
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="openTab('led')">⚡ LED Kalkulátor</button>
+        <button class="tab-btn" onclick="openTab('ohm')">Ω Ohm-Törvény</button>
+    </div>
+
+    <div id="led" class="tool-section active">
+        <div class="control-panel">
+            <h2>LED Megmentő</h2>
+            <div class="input-group">
+                <label>Tápfeszültség (V)</label>
+                <input type="number" id="voltage" placeholder="pl. 12" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>LED Színe</label>
+                <select id="ledColor" onchange="updateLedGraphic()">
+                    <option value="1.8|#ff0000">🔴 Piros (1.8V)</option>
+                    <option value="2.0|#ffa500">🟠 Narancs (2.0V)</option>
+                    <option value="2.2|#ffff00">🟡 Sárga (2.2V)</option>
+                    <option value="3.2|#00ff00">🟢 Zöld (3.2V)</option>
+                    <option value="3.2|#0000ff">🔵 Kék (3.2V)</option>
+                    <option value="3.4|#ffffff">⚪ Fehér (3.4V)</option>
+                    <option value="custom|#cccccc">🔧 Egyedi...</option>
+                </select>
+            </div>
+            <div class="input-group" id="customVoltGroup" style="display:none;">
+                <label>LED Nyitófeszültség (V)</label>
+                <input type="number" id="ledFwdVolt" value="2.0" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>Áramfelvétel (mA)</label>
+                <input type="number" id="current" value="20">
+            </div>
+            <button class="calc-btn" onclick="calcLED()">Számolás!</button>
+        </div>
+
+        <div class="result-panel">
+            <div id="visualLed" class="led-graphic"></div>
+            <div class="display-screen" id="displayLed">Várakozás adatokra...</div>
+            
+            <div id="visualResistor" class="resistor-graphic" style="display:none;">
+                <div class="band" style="background:brown;"></div>
+                <div class="band" style="background:black;"></div>
+                <div class="band" style="background:red;"></div>
+                <div class="band" style="background:gold;"></div>
+            </div>
+            <p id="resText" style="display:none; color:#ccc; margin-top:10px;">Javasolt ellenállás</p>
+        </div>
+    </div>
+
+    <div id="ohm" class="tool-section">
+        <div class="control-panel">
+            <h2>Ohm-Mester</h2>
+            
+            <div class="input-group">
+                <label>Mit keresünk?</label>
+                <select id="ohmTarget" onchange="updateOhmInputs()">
+                    <option value="R">Ellenállás (R = U / I)</option>
+                    <option value="U">Feszültség (U = R * I)</option>
+                    <option value="I">Áramerősség (I = U / R)</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="grp_U">
+                <label>Feszültség (U) - Volt</label>
+                <input type="number" id="ohm_U" placeholder="pl. 12">
+            </div>
+            <div class="input-group" id="grp_R" style="display:none;">
+                <label>Ellenállás (R) - Ohm</label>
+                <input type="number" id="ohm_R" placeholder="pl. 100">
+            </div>
+            <div class="input-group" id="grp_I">
+                <label>Áram (I) - Amper</label>
+                <input type="number" id="ohm_I" placeholder="pl. 0.5">
+            </div>
+
+            <button class="calc-btn" style="background:#005c97;" onclick="calcOhm()">Számolás!</button>
+        </div>
+
+        <div class="result-panel">
+            <div id="ohmGraphic" class="ohm-triangle"></div>
+            <br>
+            <div class="display-screen" id="displayOhm" style="color:cyan;">
+                Válassz típust és írj be 2 adatot!
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- 1. TAB VÁLTÁS ---
+    function openTab(tabName) {
+        var i;
+        var x = document.getElementsByClassName("tool-section");
+        for (i = 0; i < x.length; i++) { x[i].className = "tool-section"; } // Elrejt mindent
+        document.getElementById(tabName).className = "tool-section active"; // Megjelenít
+        
+        var btns = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < btns.length; i++) { btns[i].className = "tab-btn"; }
+        event.currentTarget.className = "tab-btn active";
+    }
+
+    // --- 2. LED KALKULÁTOR FUNKCIÓK ---
+    function updateLedGraphic() {
+        var select = document.getElementById('ledColor');
+        var value = select.value.split('|');
+        document.getElementById('visualLed').style.color = value[1];
+        document.getElementById('customVoltGroup').style.display = (value[0] === 'custom') ? 'block' : 'none';
+    }
+    
+    function calcLED() {
+        var vSource = parseFloat(document.getElementById('voltage').value);
+        var sel = document.getElementById('ledColor').value.split('|');
+        var vLed = (sel[0] === 'custom') ? parseFloat(document.getElementById('ledFwdVolt').value) : parseFloat(sel[0]);
+        var iLed = parseFloat(document.getElementById('current').value);
+        var disp = document.getElementById('displayLed');
+
+        if(!vSource || isNaN(vLed) || !iLed) { 
+            disp.innerHTML = "<span class='warning'>HIBA: Tölts ki minden mezőt!</span>"; 
+            return; 
+        }
+        if(vSource <= vLed) { 
+            disp.innerHTML = "<span class='warning'>Kevés a feszültség!</span>"; 
+            return; 
+        }
+
+        var R = (vSource - vLed) / (iLed / 1000);
+        var W = (iLed/1000)**2 * R;
+        var stdR = getStandardResistor(R);
+        
+        disp.innerHTML = "Számított: " + Math.round(R) + " Ω<br><span class='display-value' style='color:cyan'>" + stdR + " Ω (Szabvány)</span><br><small>Teljesítmény: " + W.toFixed(2) + "W</small>";
+        
+        document.getElementById('visualLed').className = "led-graphic led-on";
+        document.getElementById('visualResistor').style.display = "flex";
+        document.getElementById('resText').style.display = "block";
+    }
+
+    function getStandardResistor(val) {
+        var e24 = [10, 12, 15, 18, 22, 27, 33, 39, 47, 51, 56, 62, 68, 75, 82, 100, 120, 150, 180, 200, 220, 240, 270, 300, 330, 360, 390, 430, 470, 510, 560, 620, 680, 750, 820, 910, 1000];
+        for (var i = 0; i < e24.length; i++) { if (e24[i] >= val) return e24[i]; }
+        return Math.round(val);
+    }
+
+    // --- 3. OHM KALKULÁTOR FUNKCIÓK ---
+    function updateOhmInputs() {
+        var target = document.getElementById('ohmTarget').value;
+        document.getElementById('grp_U').style.display = (target === 'U') ? 'none' : 'block';
+        document.getElementById('grp_R').style.display = (target === 'R') ? 'none' : 'block';
+        document.getElementById('grp_I').style.display = (target === 'I') ? 'none' : 'block';
+        document.getElementById('displayOhm').innerHTML = "Írd be a maradék 2 adatot!";
+        document.getElementById('ohmGraphic').className = "ohm-triangle";
+    }
+
+    function calcOhm() {
+        var target = document.getElementById('ohmTarget').value;
+        var U = parseFloat(document.getElementById('ohm_U').value);
+        var R = parseFloat(document.getElementById('ohm_R').value);
+        var I = parseFloat(document.getElementById('ohm_I').value);
+        var res = 0; var unit = "";
+
+        if (target === 'R') {
+            if(!U || !I) { alert("Hiányzó adat!"); return; }
+            res = U / I; unit = "Ω";
+        } else if (target === 'U') {
+            if(!R || !I) { alert("Hiányzó adat!"); return; }
+            res = R * I; unit = "V";
+        } else if (target === 'I') {
+            if(!U || !R) { alert("Hiányzó adat!"); return; }
+            res = U / R; unit = "A";
+        }
+
+        document.getElementById('displayOhm').innerHTML = "Eredmény:<br><span class='display-value' style='color:cyan'>" + res.toFixed(2) + " " + unit + "</span>";
+        document.getElementById('ohmGraphic').className = "ohm-triangle ohm-active";
+    }
+
+    // Alaphelyzet beállítása
+    updateLedGraphic();
+    updateOhmInputs();
+</script>
+
+</body>
+</html>
