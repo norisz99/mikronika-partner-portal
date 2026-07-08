@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakt - Mikronika PC</title>
+    <style>
+        /* --- PROFI STÍLUS (SÖTÉT HÁTTÉR) --- */
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); background-attachment: fixed; color: #333; min-height: 100vh; }
+        #wrapper { width: 1200px; max-width: 98%; margin: 20px auto; background-color: #fff; box-shadow: 0 0 30px rgba(0,0,0,0.8); border-radius: 5px; overflow: hidden; }
+        #header { padding: 20px; text-align: center; border-bottom: 5px solid #d70e02; background: #fff; }
+        .logo-img { max-width: 350px; margin-bottom: 10px; }
+        .shop-img { max-width: 100%; width: 800px; border-radius: 4px; border: 1px solid #ddd; margin-top: 15px; }
+        .flags { display: flex; justify-content: center; gap: 15px; margin: 10px 0; }
+        .flags a img { width: 30px; height: auto; border: 1px solid #ccc; transition: 0.2s; }
+        .flags a:hover img { transform: scale(1.1); box-shadow: 0 0 5px rgba(0,0,0,0.3); }
+        #nav { margin-top: 15px; font-weight: bold; font-size: 18px; text-transform: uppercase; background: #eee; padding: 12px; border-radius: 50px; display: inline-block; }
+        #nav a { color: #555; text-decoration: none; padding: 0 20px; transition: 0.3s; }
+        #nav a:hover, #nav a.active { color: #d70e02; }
+        #inner { display: flex; flex-wrap: wrap; border-top: 1px solid #eee; }
+        #browse { flex: 0 0 250px; background: #222; color: white; padding: 0; min-height: 600px; }
+        #browse dt { background: #d70e02; color: white; padding: 15px; font-size: 18px; font-weight: bold; text-transform: uppercase; text-align: center; margin: 0; }
+        #browse dd { margin: 0; }
+        #browse dd a { display: block; padding: 12px 20px; color: #ccc; text-decoration: none; border-bottom: 1px solid #444; transition: 0.3s; }
+        #browse dd a:hover { background: #444; color: #fff; border-left: 5px solid #d70e02; padding-left: 15px; }
+        #body { flex: 1; padding: 40px; background: #fff; }
+        
+        .contact-box { max-width: 800px; margin: 0 auto; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        h2 { color: #d70e02; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-top: 0; }
+        .contact-row { display: flex; align-items: flex-start; margin-bottom: 25px; font-size: 16px; line-height: 1.5; }
+        .contact-row img { width: 32px; height: 32px; margin-right: 20px; margin-top: -5px; }
+        .contact-label { font-weight: bold; font-size: 18px; color: #555; margin-bottom: 5px; }
+        .map-container { margin-top: 30px; border: 5px solid #fff; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .facebook-container { margin-top: 50px; border: 4px solid #1877f2; border-radius: 8px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); background: #fff; text-align: center; }
+        .twitch-container { margin-top: 30px; border: 4px solid #6441a5; border-radius: 8px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); background: #000; }
+        @media (max-width: 800px) { #inner { flex-direction: column; } #browse { flex: 0 0 100%; min-height: auto; } .shop-img { width: 100%; } }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        
+        <div class="flags">
+            <a href="index.html" title="Magyar"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Flag_of_Hungary.svg"></a>
+            <a href="MainPage.html" title="English"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" style="opacity: 0.6;"></a>
+            <a href="Home.html" title="Deutsch"><img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg"></a>
+        </div>
+
+        <div id="nav">
+            <a href="Home.html">Startseite</a> | 
+            <a href="Katalog.html">Katalog</a> |
+            <a href="Wissen.html" style="color:#d70e02;">Wissen</a> |
+            <a href="Kontakt.html" class="active">Kontakt</a>
+        </div>
+        
+        <br>
+        <img src="images/Szakuzlet.jpg" alt="Shop" class="shop-img">
+    </div>
+
+    <div id="inner">
+        <dl id="browse">
+            <dt>Menü</dt>
+            <dd><a href="Home.html">Startseite</a></dd>
+            <dd><a href="Katalog.html">Produktkatalog</a></dd>
+            <dd><a href="Wissen.html">Wissen (LED)</a></dd>
+            <dd><a href="Kontakt.html" style="color:white; background:#444; border-left:5px solid #d70e02;">Kontakt</a></dd>
+        </dl>
+
+        <div id="body">
+            <div class="contact-box">
+                <h2>Kontakt</h2>
+                <p style="font-size:18px; color:#666;">Kontaktieren Sie uns oder besuchen Sie unser Geschäft!</p>
+                <br>
+
+                <div class="contact-row">
+                    <img src="https://cdn-icons-png.flaticon.com/512/535/535239.png" alt="Adresse"> 
+                    <div>
+                        <div class="contact-label">Adresse:</div>
+                        <div>1111 Budapest, Budafoki út 10/b</div>
+                    </div>
+                </div>
+
+                <div class="contact-row">
+                    <img src="https://cdn-icons-png.flaticon.com/512/724/724664.png" alt="Telefon">
+                    <div>
+                        <div class="contact-label">Telefon:</div>
+                        <div>+36 1 209 73 52</div>
+                    </div>
+                </div>
+
+                <div class="contact-row">
+                    <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="E-Mail">
+                    <div>
+                        <div class="contact-label">E-Mail:</div>
+                        <div>info@mikronika.hu</div>
+                    </div>
+                </div>
+
+                <div class="contact-row">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2088/2088617.png" alt="Zeiten">
+                    <div>
+                        <div class="contact-label">Öffnungszeiten:</div>
+                        <div>Montag - Donnerstag: 09:00 - 17:00</div>
+                        <div>Freitag: 09:00 - 16:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <iframe src="https://maps.google.com/maps?q=1111+Budapest+Budafoki+út+10/b&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+            <div class="facebook-container">
+                <h3 style="color:white; background:#1877f2; margin:0; padding:10px;">🔵 FACEBOOK SEITE</h3>
+                <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fmikronika&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="100%" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+            </div>
+
+            <div class="twitch-container">
+                <h3 style="color:white; background:#6441a5; margin:0; padding:10px; text-align:center;">🔴 LIVE STREAM: cs_UpBeat</h3>
+                <iframe 
+                    src="https://player.twitch.tv/?channel=cs_UpBeat&parent=localhost&parent=127.0.0.1&parent=mikronikapc.hu&muted=false" 
+                    height="400" 
+                    width="100%" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="font-size:12px; color:#888; text-align:center; margin-top:5px;">(Wenn der Stream nicht lädt, <a href="https://www.twitch.tv/cs_UpBeat" target="_blank">klicke hier</a>)</p>
+
+        </div> 
+    </div> 
+</div> 
+
+</body>
+</html>

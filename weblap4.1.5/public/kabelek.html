@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kábelek - Mikronika PC</title>
+    <style>
+        /* --- STÍLUS (V3.0) --- */
+        body {
+            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+            background-attachment: fixed; color: #333; min-height: 100vh;
+        }
+        #wrapper {
+            width: 1200px; max-width: 98%; margin: 20px auto;
+            background-color: #f0f0f0; border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); overflow: hidden;
+        }
+        #header {
+            background: #fff; padding: 15px; text-align: center; border-bottom: 4px solid #d70e02;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .logo-img { max-width: 400px; height: auto; }
+        #nav {
+            margin-top: 5px; font-weight: bold; font-size: 20px; text-transform: uppercase;
+            background: #eee; padding: 10px 30px; border-radius: 20px;
+        }
+        #nav a { color: #d70e02; text-decoration: none; padding: 0 15px; }
+        #nav a:hover { color: #000; text-decoration: underline; }
+        #inner { display: flex; flex-wrap: wrap; align-items: flex-start; }
+        
+        #browse {
+            flex: 0 0 260px; background: #222; color: white; padding: 20px;
+            border-right: 4px solid #d70e02; min-height: 80vh;
+        }
+        @media (max-width: 800px) {
+            #browse { flex: 0 0 100%; min-height: auto; border-right: none; border-bottom: 4px solid #d70e02; }
+            #inner { flex-direction: column; }
+        }
+        #browse dt {
+            font-size: 18px; font-weight: bold; color: #fff; background: #d70e02;
+            padding: 10px; margin-bottom: 5px; margin-top: 20px; 
+            text-transform: uppercase; text-align: center; border-radius: 4px;
+        }
+        #browse dt:first-child { margin-top: 0; }
+        #browse dd a {
+            display: block; color: #ccc; text-decoration: none; padding: 10px 15px;
+            background: #333; border-bottom: 1px solid #444; transition: 0.3s; font-size: 15px;
+        }
+        #browse dd a:hover { background-color: #444; color: white; border-left: 5px solid #d70e02; padding-left: 10px; }
+
+        /* ÜRES ÁLLAPOT STÍLUSA */
+        #body { flex: 1; padding: 50px; background-color: #e6e6e6; text-align: center; min-height: 600px; }
+        .construction-icon { font-size: 80px; margin-bottom: 20px; }
+        h2 { color: #d70e02; font-size: 32px; margin-bottom: 10px; }
+        p { font-size: 18px; color: #666; }
+        .back-btn {
+            display: inline-block; margin-top: 30px; padding: 15px 30px;
+            background: #333; color: white; text-decoration: none; font-weight: bold;
+            border-radius: 5px; transition: 0.3s;
+        }
+        .back-btn:hover { background: #d70e02; }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        <div id="nav">
+            <a href="index.html">Főoldal</a> | 
+            <a href="katalogus.html">Katalógus</a> |
+            <a href="P=2.html">Kapcsolatok</a>
+        </div>
+        <img src="images/Szakuzlet.jpg" alt="Üzlet" style="border-radius: 4px; border: 1px solid #ccc; max-width: 800px;">
+    </div>
+
+    <div id="inner">
+        <dl id="browse">
+            <dt><a href="katalogus.html" style="color:white; text-decoration:none;">◄ Vissza a Katalógushoz</a></dt>
+            
+            <dt>Kategóriák</dt>
+            <dd><a href="katalogus.html">Kapcsolók</a></dd>
+            <dd><a href="fejlesztoeszkozok.html">Fejlesztő eszközök</a></dd>
+            <dd><a href="relek.html">Relék és foglalatok</a></dd>
+            <dd><a href="ledek.html">Ledek és Kijelzők</a></dd>
+            <dd><a href="forrasztas.html">Forrasztástechnika</a></dd>
+            <dd><a href="nyakok.html">Nyákok és próbanyákok</a></dd>
+            <dd><a href="kabelek.html">Kábelek és vezetékek</a></dd>
+            <dd><a href="szigetelo.html">Zsugorcsövek, szigetelés</a></dd>
+            <dd><a href="passziv.html">Passzív elemek</a></dd>
+            <dd><a href="felvezetok.html">Félvezetők</a></dd>
+        </dl>
+
+        <div id="body">
+            <div class="construction-icon">🚧</div>
+            
+            <h2>Kábelek és vezetékek</h2>
+            
+            <p>Ez a kategória jelenleg frissítés alatt áll.</p>
+            <p>Kérjük, látogasson vissza később, vagy érdeklődjön elérhetőségeinken!</p>
+            
+            <a href="katalogus.html" class="back-btn">Vissza a termékekhez</a>
+        </div> 
+    </div> 
+</div> 
+
+</body>
+</html>

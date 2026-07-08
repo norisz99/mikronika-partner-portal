@@ -1,0 +1,7 @@
+[
+    { "id": "IRS-101", "name": "Wippschalter piros", "price": 450, "stock": 50 },
+    { "id": "HB110", "name": "Kétpólusú kapcsoló", "price": 550, "stock": 20 },
+    { "id": "ARD-UNO", "name": "Arduino Uno R3", "price": 8900, "stock": 5 },
+    { "id": "LED-5MM", "name": "LED 5mm Piros", "price": 20, "stock": 1000 },
+    { "id": "RES-1K", "name": "Ellenállás 1kOhm", "price": 5, "stock": 500 }
+]

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fejlesztő Eszközök - Mikronika PC</title>
+    <style>
+        /* --- STÍLUS (V3.0 - SÖTÉT TÉMA) --- */
+        body {
+            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+            background-attachment: fixed; color: #333; min-height: 100vh;
+        }
+        #wrapper {
+            width: 1200px; max-width: 98%; margin: 20px auto;
+            background-color: #f0f0f0; border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); overflow: hidden;
+        }
+        /* FEJLÉC */
+        #header {
+            background: #fff; padding: 15px; text-align: center; border-bottom: 4px solid #d70e02;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .logo-img { max-width: 400px; height: auto; }
+        #nav {
+            margin-top: 5px; font-weight: bold; font-size: 20px; text-transform: uppercase;
+            background: #eee; padding: 10px 30px; border-radius: 20px;
+        }
+        #nav a { color: #d70e02; text-decoration: none; padding: 0 15px; }
+        #nav a:hover { color: #000; text-decoration: underline; }
+
+        /* ELRENDEZÉS */
+        #inner { display: flex; flex-wrap: wrap; align-items: flex-start; }
+        
+        /* BAL MENÜ */
+        #browse {
+            flex: 0 0 260px; background: #222; color: white; padding: 20px;
+            border-right: 4px solid #d70e02; min-height: 100vh;
+        }
+        @media (max-width: 800px) {
+            #browse { flex: 0 0 100%; min-height: auto; border-right: none; border-bottom: 4px solid #d70e02; }
+            #inner { flex-direction: column; }
+        }
+        #browse dt {
+            font-size: 18px; font-weight: bold; color: #fff; background: #d70e02;
+            padding: 10px; margin-bottom: 5px; margin-top: 20px; 
+            text-transform: uppercase; text-align: center; border-radius: 4px;
+        }
+        #browse dt:first-child { margin-top: 0; }
+        #browse dd a {
+            display: block; color: #ccc; text-decoration: none; padding: 10px 15px;
+            background: #333; border-bottom: 1px solid #444; transition: 0.3s; font-size: 15px;
+        }
+        #browse dd a:hover { background-color: #444; color: white; border-left: 5px solid #d70e02; padding-left: 10px; }
+
+        /* TERMÉKEK */
+        #body { flex: 1; padding: 20px; background-color: #e6e6e6; }
+        .inner { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        
+        .product-card {
+            background: white; border: 1px solid #ccc; border-radius: 8px;
+            padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .product-card:hover { transform: translateY(-5px); border-color: #d70e02; }
+        
+        /* KÉPEK */
+        .zoomable {
+            max-width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; cursor: zoom-in;
+            transition: opacity 0.3s;
+        }
+        .zoomable:hover { opacity: 0.8; }
+        
+        /* SZÖVEGEK */
+        h3 { color: #333; margin: 10px 0; font-size: 18px; min-height: 40px; }
+        p { font-size: 14px; color: #666; margin: 5px 0; }
+        .readmore a {
+            display: inline-block; background: #d70e02; color: white; text-decoration: none;
+            padding: 8px 20px; border-radius: 4px; font-weight: bold; font-size: 14px;
+        }
+        .readmore a:hover { background: #b00000; }
+        
+        /* KIEMELÉS KERESÉSNÉL */
+        .highlight-card {
+            background-color: #fff9c4 !important; border: 2px solid #d70e02 !important;
+            box-shadow: 0 0 20px rgba(215, 14, 2, 0.5) !important; transform: scale(1.05);
+        }
+
+        /* KERESŐ */
+        .searchform { margin-top: 20px; padding: 15px; background: #fff; border-radius: 4px; }
+        .searchform input { width: 90%; padding: 8px; margin-bottom: 5px; border: 2px solid #d70e02; }
+        .search-btn { width: 100%; padding: 8px; background: #d70e02; color: white; border: none; cursor: pointer; font-weight: bold; }
+
+        /* LIGHTBOX (NAGYÍTÓ ABLAK) */
+        #imageModal {
+            display: none; position: fixed; z-index: 9999; padding-top: 30px;
+            left: 0; top: 0; width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.95); backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            margin: auto; display: block; 
+            max-width: 90vw; max-height: 90vh; /* Kitölti a képernyőt */
+            width: auto; height: auto;
+            border: 2px solid #fff; box-shadow: 0 0 30px #000;
+            animation: zoom 0.3s;
+        }
+        @keyframes zoom { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
+        .close {
+            position: absolute; top: 20px; right: 40px; color: #fff; font-size: 50px; font-weight: bold; cursor: pointer; z-index: 10001;
+        }
+        .close:hover { color: #d70e02; }
+        #caption { margin: auto; display: block; width: 80%; text-align: center; color: #fff; padding: 10px 0; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="imageModal">
+  <span class="close" onclick="closeModal()">&times;</span>
+  <img class="modal-content" id="img01">
+  <div id="caption"></div>
+</div>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        <div id="nav">
+            <a href="index.html">Főoldal</a> | 
+            <a href="katalogus.html">Katalógus</a> |
+            <a href="P=2.html">Kapcsolatok</a>
+        </div>
+        <img src="images/Szakuzlet.jpg" alt="Üzlet" style="border-radius: 4px; border: 1px solid #ccc; max-width: 800px;">
+    </div>
+
+    <div id="inner">
+        <dl id="browse">
+            <dt><a href="katalogus.html" style="color:white; text-decoration:none;">◄ Vissza a Főoldalra</a></dt>
+            
+            <dt>Kategóriák</dt>
+            <dd><a href="katalogus.html">Kapcsolók</a></dd>
+            <dd><a href="fejlesztoeszkozok.html" style="background:#d70e02; color:white; border-left:5px solid #fff;">Fejlesztő eszközök</a></dd>
+            <dd><a href="relek.html">Relék és foglalatok</a></dd>
+            <dd><a href="ledek.html">Ledek és Kijelzők</a></dd>
+            <dd><a href="forrasztas.html">Forrasztástechnika</a></dd>
+            <dd><a href="nyakok.html">Nyákok és próbanyákok</a></dd>
+            <dd><a href="kabelek.html">Kábelek és vezetékek</a></dd>
+            <dd><a href="szigetelo.html">Zsugorcsövek, szigetelés</a></dd>
+            <dd><a href="passziv.html">Passzív elemek</a></dd>
+            <dd><a href="felvezetok.html">Félvezetők</a></dd>
+            
+            <dt>Gyorskereső</dt>
+            <dd class="searchform">
+                <input id="search-input" type="text" placeholder="Pl: Arduino..." onkeypress="handleEnter(event)">
+                <button type="button" class="search-btn" onclick="searchProduct()">KERESÉS</button>
+            </dd>
+        </dl>
+
+        <div id="body">
+            <div class="inner">
+
+                <div class="product-card">
+                    <h3>Arduino DUE</h3>
+                    <img src="images/arduino_due.jpg" 
+                         data-fullsize="images nagy/Arduino DUE.jpg" 
+                         alt="Arduino DUE" class="zoomable" onclick="openModal(this)">
+                    <p>Mikrokontroller fejlesztői panel</p>
+                    <p class="readmore"><a href="ARDUINO%20DUE.html">Részletek</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Arduino LEONARDO</h3>
+                    <img src="images/arduino_leonardo.jpg" 
+                         data-fullsize="images nagy/Arduino LEONARDO.jpg" 
+                         alt="Arduino Leonardo" class="zoomable" onclick="openModal(this)">
+                    <p>Mikrokontroller fejlesztői panel</p>
+                    <p class="readmore"><a href="ARDUINO%20LEONARDO.html">Részletek</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Arduino Nano</h3>
+                    <img src="images/arduino_nano.jpg" 
+                         data-fullsize="images nagy/Arduino Nano.jpg" 
+                         alt="Arduino Nano" class="zoomable" onclick="openModal(this)">
+                    <p>Kompakt fejlesztői panel</p>
+                    <p class="readmore"><a href="ARDUINO%20Nano.html">Részletek</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Arduino Pro Micro</h3>
+                    <img src="images/arduino_pro_micro.jpg" 
+                         data-fullsize="images nagy/Arduino Pro Micro.jpg" 
+                         alt="Arduino Pro Micro" class="zoomable" onclick="openModal(this)">
+                    <p>Miniatűr fejlesztői panel</p>
+                    <p class="readmore"><a href="AURDUINO%20Pro%20Micro.html">Részletek</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Arduino Pro Mini</h3>
+                    <img src="images/arduino_pro_mini.jpg" 
+                         data-fullsize="images nagy/Arduino Pro Mini.jpg" 
+                         alt="Arduino Pro Mini" class="zoomable" onclick="openModal(this)">
+                    <p>Fejlesztői panel (USB nélkül)</p>
+                    <p class="readmore"><a href="Arduino%20Pro%20Mini.html">Részletek</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Arduino UNO</h3>
+                    <img src="images/arduino_uno.jpg" 
+                         data-fullsize="images nagy/Arduino UNO.jpg" 
+                         alt="Arduino UNO" class="zoomable" onclick="openModal(this)">
+                    <p>A legnépszerűbb alapmodell</p>
+                    <p class="readmore"><a href="Arduino%20UNO.html">Részletek</a></p>
+                </div>
+
+                <div class="product-card">
+                    <h3>Arduino MEGA</h3>
+                    <img src="images/aurduino_mega.jpg" 
+                         data-fullsize="images nagy/Arduino MEGA.jpg" 
+                         alt="Arduino MEGA" class="zoomable" onclick="openModal(this)">
+                    <p>Bővített fejlesztői panel</p>
+                    <p class="readmore"><a href="Arduino%20MEGA.html">Részletek</a></p>
+                </div>
+
+            </div> 
+        </div> 
+    </div> 
+</div> 
+
+<script>
+    // --- LIGHTBOX FUNKCIÓ ---
+    function openModal(element) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("img01");
+        var captionText = document.getElementById("caption");
+        
+        modal.style.display = "block";
+        // A data-fullsize attribútumból olvassa ki a nagy képet!
+        var fullSizeSrc = element.getAttribute('data-fullsize') || element.src;
+        modalImg.src = fullSizeSrc;
+        captionText.innerHTML = element.alt;
+    }
+
+    function closeModal() { document.getElementById("imageModal").style.display = "none"; }
+    window.onclick = function(event) { if (event.target == document.getElementById("imageModal")) closeModal(); }
+
+    // --- KERESŐ FUNKCIÓ ---
+    function handleEnter(e) { if(e.keyCode === 13){ e.preventDefault(); searchProduct(); } }
+
+    function searchProduct() {
+        var input = document.getElementById("search-input").value.toLowerCase();
+        if (input === "") { alert("Kérlek írj be valamit!"); return; }
+
+        var cards = document.getElementsByClassName("product-card");
+        var count = 0; var firstMatch = null;
+
+        for (var i = 0; i < cards.length; i++) cards[i].classList.remove("highlight-card");
+
+        for (var i = 0; i < cards.length; i++) {
+            var card = cards[i];
+            var text = card.innerText.toLowerCase();
+            if (text.includes(input)) {
+                card.classList.add("highlight-card"); count++;
+                if (firstMatch === null) firstMatch = card;
+            }
+        }
+        if (count > 0) {
+            firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            alert("Nincs találat ebben a kategóriában.");
+        }
+    }
+</script>
+
+</body>
+</html>

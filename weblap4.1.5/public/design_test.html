@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>DESIGN TESZT - Mikronika PC</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        /* --- UGYANAZ A CSS, MINT AZ ÉLES VERZIÓBAN --- */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eee; display: flex; min-height: 100vh; margin: 0; }
+        
+        /* Oldalsáv */
+        #sidebar { width: 250px; background: #222; color: #fff; padding: 20px; display: flex; flex-direction: column; }
+        #sidebar h3 { color: #d70e02; border-bottom: 2px solid #444; padding-bottom: 10px; margin-top: 0; }
+        .menu-item { padding: 15px; color: #ccc; cursor: pointer; border-radius: 5px; transition: 0.3s; margin-bottom: 5px; }
+        .menu-item:hover { background: #333; color: white; }
+        .menu-item.active { background: #d70e02; color: white; font-weight: bold; }
+        
+        /* Tartalom */
+        #content { flex: 1; padding: 40px; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        
+        h1 { margin-top: 0; color: #333; }
+        p { color: #666; }
+
+        /* Táblázat */
+        .table-container { overflow-x: auto; margin-top: 20px; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: middle; }
+        th { background: #f4f4f4; color: #333; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        tr:hover { background-color: #f9f9f9; }
+        
+        /* Gombok és Inputok */
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .btn-green { background: #1D6F42; margin-top: 20px; font-size: 16px; padding: 12px 25px; }
+        .btn-edit { background: #007bff; font-size: 13px; }
+        .btn-save { background: #28a745; font-size: 13px; display: none; } /* Alapból rejtve */
+        
+        input.edit-input { width: 80px; padding: 6px; border: 2px solid #007bff; border-radius: 4px; outline: none; }
+        
+        /* Kijelentkezés gomb */
+        .logout { margin-top: auto; background: #444; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        .logout:hover { background: #d70e02; }
+
+        /* Badgek */
+        .role-badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: #d70e02; color: white; text-transform: uppercase; letter-spacing: 1px; vertical-align: middle; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h3>⚙️ RENDSZER</h3>
+        <div class="menu-item active">📊 Árlista Kezelő</div>
+        <div class="menu-item">📦 Raktár (Készlet)</div>
+        <div class="menu-item">👥 Felhasználók</div>
+        <button class="logout" onclick="alert('Ez visszavinne a bejelentkezéshez')">🚪 Kijelentkezés</button>
+    </div>
+
+    <div id="content">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1 style="margin:0;">Vezérlőpult</h1>
+                <div style="text-align:right;">
+                    <span style="font-weight:bold; color:#333;">mikronika_admin</span>
+                    <span class="role-badge">Adminisztrátor</span>
+                </div>
+            </div>
+            
+            <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;">
+
+            <p>Itt kezelheted a termékek árait és a raktárkészletet. A módosításhoz kattints a ceruza ikonra.</p>
+            
+            <div class="table-container">
+                <table id="productTable">
+                    <thead>
+                        <tr>
+                            <th>Cikkszám</th>
+                            <th>Termék neve</th>
+                            <th>Ár (Nettó)</th>
+                            <th>Készlet</th>
+                            <th style="width: 100px; text-align:center;">Művelet</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="row-1">
+                            <td><strong>ARD-UNO</strong></td>
+                            <td>Arduino Uno R3 (Eredeti)</td>
+                            <td>
+                                <span class="view-mode">8 900 Ft</span>
+                                <input type="number" class="edit-mode edit-input" value="8900" style="display:none">
+                            </td>
+                            <td>
+                                <span class="view-mode" style="color:green; font-weight:bold;">10 db</span>
+                                <input type="number" class="edit-mode edit-input" value="10" style="display:none">
+                            </td>
+                            <td style="text-align:center;">
+                                <button class="btn btn-edit" onclick="toggleEdit('row-1')">✏️</button>
+                                <button class="btn btn-save" onclick="toggleEdit('row-1')">💾</button>
+                            </td>
+                        </tr>
+
+                        <tr id="row-2">
+                            <td><strong>IRS-101</strong></td>
+                            <td>Wippschalter Billenőkapcsoló Piros</td>
+                            <td>
+                                <span class="view-mode">450 Ft</span>
+                                <input type="number" class="edit-mode edit-input" value="450" style="display:none">
+                            </td>
+                            <td>
+                                <span class="view-mode" style="color:orange;">5 db</span>
+                                <input type="number" class="edit-mode edit-input" value="5" style="display:none">
+                            </td>
+                            <td style="text-align:center;">
+                                <button class="btn btn-edit" onclick="toggleEdit('row-2')">✏️</button>
+                                <button class="btn btn-save" onclick="toggleEdit('row-2')">💾</button>
+                            </td>
+                        </tr>
+
+                        <tr id="row-3">
+                            <td><strong>LED-5MM</strong></td>
+                            <td>LED Dióda 5mm (Csomag)</td>
+                            <td>
+                                <span class="view-mode">200 Ft</span>
+                                <input type="number" class="edit-mode edit-input" value="200" style="display:none">
+                            </td>
+                            <td>
+                                <span class="view-mode" style="color:green;">1000 db</span>
+                                <input type="number" class="edit-mode edit-input" value="1000" style="display:none">
+                            </td>
+                            <td style="text-align:center;">
+                                <button class="btn btn-edit" onclick="toggleEdit('row-3')">✏️</button>
+                                <button class="btn btn-save" onclick="toggleEdit('row-3')">💾</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn btn-green" onclick="alert('Itt töltődne le az Excel fájl (.csv)')">
+                📥 Teljes Excel Letöltése
+            </button>
+        </div>
+    </div>
+
+<script>
+    // EZ CSAK A LÁTVÁNY MIATT VAN ITT (DEMO)
+    function toggleEdit(rowId) {
+        const row = document.getElementById(rowId);
+        
+        // Megnézzük, éppen szerkesztünk-e
+        const isEditing = row.querySelector('.edit-mode').style.display === 'inline-block';
+
+        if (!isEditing) {
+            // BEKAPCSOLJUK A SZERKESZTÉST
+            row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
+            row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'inline-block');
+            row.querySelector('.btn-edit').style.display = 'none';
+            row.querySelector('.btn-save').style.display = 'inline-flex';
+            
+            // Fókusz az ár mezőre
+            row.querySelector('input').focus();
+        } else {
+            // KIKAPCSOLJUK (MENTÉS SZIMULÁLÁSA)
+            const newVal = row.querySelector('input').value;
+            row.querySelector('.view-mode').innerText = newVal + " Ft"; // Csak a látvány kedvéért frissítjük
+
+            row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'inline');
+            row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
+            row.querySelector('.btn-edit').style.display = 'inline-flex';
+            row.querySelector('.btn-save').style.display = 'none';
+            
+            alert("✅ DEMO: Adatok elmentve (vizuálisan)!");
+        }
+    }
+</script>
+
+</body>
+</html>

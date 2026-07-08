@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Vezérlőpult - Mikronika PC</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #eee; display: flex; min-height: 100vh; margin: 0; }
+        
+        #sidebar { width: 250px; background: #222; color: #fff; padding: 20px; display: flex; flex-direction: column; }
+        #sidebar h3 { color: #d70e02; border-bottom: 2px solid #444; padding-bottom: 10px; margin-top: 0; }
+        .menu-item { padding: 15px; color: #ccc; cursor: pointer; border-radius: 5px; }
+        .menu-item.active { background: #d70e02; color: white; }
+        
+        #content { flex: 1; padding: 40px; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #f4f4f4; }
+        
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-decoration: none; display: inline-block;}
+        .btn-green { background: #1D6F42; margin-top: 20px; font-size: 16px; padding: 12px 20px; }
+        .btn-edit { background: #007bff; font-size: 14px; }
+        .btn-save { background: #28a745; display: none; }
+        
+        input.edit-input { width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 3px; }
+        
+        .logout { margin-top: auto; background: #444; color: white; border: none; padding: 10px; cursor: pointer; }
+        .logout:hover { background: #d70e02; }
+
+        .role-badge { font-size: 12px; padding: 3px 8px; border-radius: 10px; background: #eee; color: #555; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h3>⚙️ Rendszer</h3>
+        <div class="menu-item active">📊 Árlista Kezelő</div>
+        <div class="menu-item" onclick="alert('Ez a funkció fejlesztés alatt!')">📦 Raktár (Készlet)</div>
+        <button class="logout" onclick="logout()">Kijelentkezés</button>
+    </div>
+
+    <div id="content">
+        <div class="card">
+            <h1 id="welcomeTitle">Üdvözöljük!</h1>
+            <p>Bejelentkezve mint: <strong id="usernameDisplay">...</strong> <span id="roleDisplay" class="role-badge">...</span></p>
+            
+            <div style="overflow-x:auto;">
+                <table id="productTable">
+                    <thead>
+                        <tr>
+                            <th>Cikkszám</th>
+                            <th>Termék neve</th>
+                            <th>Ár (Nettó)</th>
+                            <th>Készlet</th>
+                            <th class="admin-only">Művelet</th> 
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <button class="btn btn-green" onclick="downloadExcel()">📥 Excel Letöltése</button>
+        </div>
+    </div>
+
+<script>
+    let currentUser = {};
+    let products = [];
+
+    // 1. JOGOSULTSÁG ÉS ADATBETÖLTÉS (PHP hívás)
+    async function init() {
+        try {
+            const authRes = await fetch('api_auth.php');
+            const authData = await authRes.json();
+            
+            if (!authData.isLoggedIn) {
+                window.location.href = "admin.html";
+                return;
+            }
+
+            currentUser = authData.user;
+            document.getElementById("usernameDisplay").innerText = currentUser.username;
+            
+            // Szerepkör kiírása szebben
+            let roleText = "Ismeretlen";
+            if (currentUser.role === 'admin') roleText = "Adminisztrátor";
+            if (currentUser.role === 'viewer') roleText = "Partner (Csak olvasás)";
+            document.getElementById("roleDisplay").innerText = roleText;
+
+            // Ha NEM admin, elrejtjük az admin oszlopot a fejlécből
+            if (currentUser.role !== 'admin') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            }
+
+            loadProducts();
+        } catch (e) {
+            console.error("Hiba az azonosításnál:", e);
+            window.location.href = "admin.html";
+        }
+    }
+
+    // 2. TERMÉKEK BETÖLTÉSE (PHP hívás)
+    async function loadProducts() {
+        try {
+            const res = await fetch('api_data.php');
+            products = await res.json();
+            renderTable();
+        } catch (e) {
+            console.error("Hiba az adatok betöltésekor:", e);
+            alert("Nem sikerült betölteni az adatokat!");
+        }
+    }
+
+    function renderTable() {
+        const tbody = document.querySelector("#productTable tbody");
+        tbody.innerHTML = "";
+
+        products.forEach(p => {
+            let actionBtn = "";
+            // Csak adminnak rakunk szerkesztés gombot
+            if (currentUser.role === 'admin') {
+                actionBtn = `<button class="btn btn-edit" onclick="enableEdit('${p.id}')">✏️</button>`;
+            }
+
+            // Készlet ellenőrzés (ha nincs, 0-t írunk)
+            let stock = p.stock !== undefined ? p.stock : 0;
+
+            let row = `
+                <tr id="row-${p.id}">
+                    <td>${p.id}</td>
+                    <td>${p.name}</td>
+                    <td>
+                        <span class="view-mode view-price">${p.price} Ft</span>
+                        <input type="number" class="edit-mode edit-price edit-input" value="${p.price}" style="display:none">
+                    </td>
+                    <td>
+                        <span class="view-mode view-stock">${stock} db</span>
+                        <input type="number" class="edit-mode edit-stock edit-input" value="${stock}" style="display:none">
+                    </td>
+                    <td class="admin-only">
+                        ${actionBtn}
+                        <button class="btn btn-save" onclick="saveEdit('${p.id}')" style="display:none">💾</button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+        
+        // Admin oszlop elrejtése a táblázat törzsében is, ha nem admin
+        if (currentUser.role !== 'admin') {
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+        }
+    }
+
+    // 3. SZERKESZTÉS MÓD BEKAPCSOLÁSA (Frontend)
+    function enableEdit(id) {
+        const row = document.getElementById(`row-${id}`);
+        // Elrejtjük a szöveges értékeket
+        row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
+        // Megjelenítjük az inputokat
+        row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'inline-block');
+        // Gomb csere
+        row.querySelector('.btn-edit').style.display = 'none';
+        row.querySelector('.btn-save').style.display = 'inline-block';
+    }
+
+    // 4. MENTÉS (Küldés a PHP szervernek)
+    async function saveEdit(id) {
+        const row = document.getElementById(`row-${id}`);
+        const newPrice = row.querySelector('.edit-price').value;
+        const newStock = row.querySelector('.edit-stock').value;
+
+        // Frissítendő adat objektum
+        const updatedData = {
+            id: id,
+            price: parseInt(newPrice),
+            stock: parseInt(newStock)
+        };
+
+        try {
+            // POST hívás az api_data.php-nak
+            const res = await fetch('api_data.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            const data = await res.json();
+            
+            if (data.success) {
+                alert("✅ Sikeres mentés!");
+                loadProducts(); // Újratöltés, hogy frissüljön a nézet
+            } else {
+                alert("❌ Hiba: " + (data.message || "Ismeretlen hiba"));
+            }
+        } catch (e) {
+            console.error(e);
+            alert("❌ Kommunikációs hiba a szerverrel!");
+        }
+    }
+
+    // 5. EXCEL LETÖLTÉS
+    function downloadExcel() {
+        let csv = "\uFEFFCikkszám;Név;Ár;Készlet\n";
+        products.forEach(p => { 
+            let s = p.stock !== undefined ? p.stock : 0;
+            csv += `${p.id};${p.name};${p.price};${s}\n`; 
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Mikronika_Partner_Lista.csv";
+        link.click();
+    }
+
+    // 6. KIJELENTKEZÉS (PHP hívás)
+    async function logout() {
+        await fetch('api_auth.php?logout=true');
+        window.location.href = "admin.html";
+    }
+
+    init();
+</script>
+</body>
+</html>

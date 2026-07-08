@@ -1,0 +1,12 @@
+[
+    {
+        "username": "mikronika_admin",
+        "password": "$2y$10$wN6UN6ckg2uQoJ52OGydyu7X.OBinbNW0gJxBgB1ayoUjgCg7uJxa", 
+        "role": "admin"
+    },
+    {
+        "username": "partner_user",
+        "password": "$2y$10$wYy13UjCWaQ9f3nuMhJ2TO4C308/igJjdHTO1Ok2.nbGGP0XFUIMa",
+        "role": "viewer"
+    }
+]

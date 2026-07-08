@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Kalkulátor - Mikronika PC</title>
+    <style>
+        /* --- ALAP STÍLUS (SÖTÉT TÉMA) --- */
+        body { 
+            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%); 
+            color: #fff; min-height: 100vh; 
+        }
+        #wrapper { width: 1200px; max-width: 98%; margin: 20px auto; background-color: #222; box-shadow: 0 0 30px rgba(0,0,0,0.8); border-radius: 10px; overflow: hidden; border: 2px solid #444; }
+        
+        /* FEJLÉC */
+        #header { padding: 20px; text-align: center; border-bottom: 5px solid #d70e02; background: #fff; }
+        .logo-img { max-width: 300px; }
+        #nav { margin-top: 15px; font-weight: bold; font-size: 18px; text-transform: uppercase; background: #eee; padding: 12px; border-radius: 50px; display: inline-block; }
+        #nav a { color: #555; text-decoration: none; padding: 0 20px; transition: 0.3s; }
+        #nav a:hover { color: #d70e02; }
+
+        /* JÁTÉKTÉR - KALKULÁTOR */
+        .game-board {
+            padding: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; align-items: flex-start;
+        }
+
+        /* 1. BEVITELI PANEL (Bal oldal) */
+        .control-panel {
+            background: #333; padding: 30px; border-radius: 15px; border: 2px solid #555;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); width: 350px;
+        }
+        .control-panel h2 { color: #d70e02; margin-top: 0; text-align: center; text-transform: uppercase; }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #ccc; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 18px; font-weight: bold; box-sizing: border-box;
+        }
+        .input-group input:focus { outline: 3px solid #d70e02; }
+        
+        .calc-btn {
+            width: 100%; padding: 15px; background: #d70e02; color: white; border: none;
+            font-size: 20px; font-weight: bold; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 5px 0 #900;
+        }
+        .calc-btn:active { transform: translateY(5px); box-shadow: none; }
+
+        /* 2. VIZUÁLIS EREDMÉNY (Jobb oldal) */
+        .result-panel {
+            background: #2a2a2a; padding: 30px; border-radius: 15px; border: 2px solid #555;
+            width: 500px; text-align: center; position: relative; min-height: 400px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        /* A "Műszerfal" */
+        .display-screen {
+            background: #000; color: #0f0; font-family: 'Courier New', monospace;
+            padding: 20px; border-radius: 8px; border: 4px solid #666; width: 90%; margin-bottom: 20px;
+            text-align: left; font-size: 16px; line-height: 1.5;
+            box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
+        }
+        .display-value { font-size: 24px; font-weight: bold; color: #fff; }
+        .warning { color: red; font-weight: bold; animation: blink 0.5s infinite; }
+
+        /* VIZUÁLIS LED */
+        .led-graphic {
+            width: 60px; height: 60px; border-radius: 50%;
+            background-color: #333; margin: 20px auto;
+            border: 4px solid #555; box-shadow: 0 0 5px #000; transition: 0.5s;
+        }
+        .led-on {
+            box-shadow: 0 0 30px currentColor, inset 0 0 20px rgba(255,255,255,0.8);
+            background-color: currentColor; border-color: #fff;
+        }
+
+        /* ELLENÁLLÁS RAJZ */
+        .resistor-graphic {
+            width: 200px; height: 50px; background: #e0c9a6; /* Bézs test */
+            border-radius: 25px; margin: 20px auto; position: relative;
+            box-shadow: 2px 5px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+            border: 2px solid #8f7d63;
+        }
+        /* Lábak */
+        .resistor-graphic::before, .resistor-graphic::after {
+            content: ''; position: absolute; width: 40px; height: 4px; background: #bbb; z-index: -1;
+        }
+        .resistor-graphic::before { left: -38px; }
+        .resistor-graphic::after { right: -38px; }
+        
+        /* Színkód csíkok */
+        .band { width: 12px; height: 100%; margin: 0 8px; }
+
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        .footer-link { margin-top: 20px; color: #aaa; text-decoration: none; display: block; }
+        .footer-link:hover { color: #fff; }
+
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="header">
+        <a href="index.html"><img src="images fooldal/logo.png" alt="Mikronika PC" class="logo-img"></a>
+        <div id="nav">
+            <a href="index.html">Főoldal</a> | 
+            <a href="katalogus.html">Katalógus</a> | 
+            <a href="P=2.html">Kapcsolatok</a>
+        </div>
+    </div>
+
+    <div class="game-board">
+        
+        <div class="control-panel">
+            <h2>⚡ LED Megmentő</h2>
+            <p style="text-align:center; color:#888; margin-bottom:20px;">Ne égesd ki! Számold ki!</p>
+
+            <div class="input-group">
+                <label>1. Tápfeszültség (V)</label>
+                <input type="number" id="voltage" placeholder="pl. 5, 9, 12" step="0.1">
+                <small style="color:#888;">Pl. Arduino (5V), Elem (9V), Autó (12V)</small>
+            </div>
+
+            <div class="input-group">
+                <label>2. LED Színe</label>
+                <select id="ledColor" onchange="updateLedGraphic()">
+                    <option value="1.8|#ff0000">🔴 Piros (1.8V)</option>
+                    <option value="2.0|#ffa500">🟠 Narancs (2.0V)</option>
+                    <option value="2.2|#ffff00">🟡 Sárga (2.2V)</option>
+                    <option value="3.2|#00ff00">🟢 Zöld (3.2V - Nagy fényerejű)</option>
+                    <option value="3.2|#0000ff">🔵 Kék (3.2V)</option>
+                    <option value="3.4|#ffffff">⚪ Fehér (3.4V)</option>
+                    <option value="custom|#cccccc">🔧 Egyedi feszültség...</option>
+                </select>
+            </div>
+            
+            <div class="input-group" id="customVoltGroup" style="display:none;">
+                <label>LED Nyitófeszültség (V)</label>
+                <input type="number" id="ledFwdVolt" value="2.0" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label>3. LED Áramfelvétel (mA)</label>
+                <input type="number" id="current" value="20">
+                <small style="color:#888;">Általános LED: 20mA</small>
+            </div>
+
+            <button class="calc-btn" onclick="calculate()">SZÁMOLÁS! 🚀</button>
+        </div>
+
+        <div class="result-panel">
+            
+            <div id="visualLed" class="led-graphic"></div>
+
+            <div class="display-screen" id="display">
+                <span style="color:#666;">// A számítás eredménye itt jelenik meg...</span><br><br>
+                Várakozás adatokra... 🤖
+            </div>
+
+            <div id="visualResistor" class="resistor-graphic" style="display:none;">
+                <div class="band" id="band1" style="background:brown;"></div>
+                <div class="band" id="band2" style="background:black;"></div>
+                <div class="band" id="band3" style="background:red;"></div>
+                <div class="band" id="band4" style="background:gold;"></div>
+            </div>
+            <p id="resistorText" style="display:none; color:#ccc;">Szükséges ellenállás (Színkód)</p>
+
+            <a href="katalogus.html" class="footer-link">◄ Megvan az érték? Irány a bolt!</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateLedGraphic() {
+        var select = document.getElementById('ledColor');
+        var value = select.value.split('|');
+        var color = value[1];
+        
+        var led = document.getElementById('visualLed');
+        led.style.color = color; // Beállítjuk a színt, de még nem világít
+        
+        // Ha egyedit választ
+        if(value[0] === 'custom') {
+            document.getElementById('customVoltGroup').style.display = 'block';
+        } else {
+            document.getElementById('customVoltGroup').style.display = 'none';
+        }
+    }
+
+    function calculate() {
+        // 1. ADATOK BEOLVASÁSA
+        var vSource = parseFloat(document.getElementById('voltage').value);
+        var select = document.getElementById('ledColor').value.split('|');
+        var vLed = (select[0] === 'custom') ? parseFloat(document.getElementById('ledFwdVolt').value) : parseFloat(select[0]);
+        var iLed_mA = parseFloat(document.getElementById('current').value);
+        
+        var display = document.getElementById('display');
+        var led = document.getElementById('visualLed');
+        var resistorG = document.getElementById('visualResistor');
+        var resText = document.getElementById('resistorText');
+
+        // HIBAKEZELÉS
+        if (!vSource || isNaN(vLed) || !iLed_mA) {
+            display.innerHTML = "<span class='warning'>HIBA: Kérlek tölts ki minden mezőt!</span>";
+            led.className = "led-graphic"; // Kikapcs
+            resistorG.style.display = "none";
+            return;
+        }
+
+        if (vSource <= vLed) {
+            display.innerHTML = "<span class='warning'>⚠ A Tápfeszültség túl alacsony!</span><br>A LED nem fog világítani.<br>Szükséges: minimum " + vLed + "V";
+            led.className = "led-graphic"; // Kikapcs
+            resistorG.style.display = "none";
+            return;
+        }
+
+        // 2. SZÁMÍTÁS (Ohm törvény: R = U / I)
+        var iLed_A = iLed_mA / 1000; // Átváltás Amperbe
+        var vDrop = vSource - vLed; // Feszültség, amit el kell fűteni
+        var resistance = vDrop / iLed_A; // Ohm
+        
+        // Teljesítmény számítás (P = I^2 * R)
+        var powerW = (iLed_A * iLed_A) * resistance;
+
+        // 3. EREDMÉNY MEGJELENÍTÉS
+        var resultHTML = "Tápfeszültség: " + vSource + "V<br>";
+        resultHTML += "LED feszültség: " + vLed + "V<br>";
+        resultHTML += "Számított ellenállás: <span class='display-value'>" + Math.round(resistance) + " Ω</span><br>";
+        resultHTML += "<br>Szabványos érték (E24): <span class='display-value' style='color:cyan'>" + getStandardResistor(resistance) + " Ω</span><br>";
+        
+        // Teljesítmény figyelmeztetés
+        if (powerW > 0.25) {
+            resultHTML += "<br><span class='warning'>⚠ FIGYELEM: " + powerW.toFixed(2) + "W hő!</span><br>A sima 0.25W-os ellenállás leéghet!<br>Használj legalább 0.5W vagy 1W-os típust!";
+        } else {
+            resultHTML += "<small style='color:#0f0'>Teljesítmény: " + powerW.toFixed(2) + "W (OK: 0.25W-os jó)</small>";
+        }
+
+        display.innerHTML = resultHTML;
+
+        // 4. ANIMÁCIÓK
+        led.className = "led-graphic led-on"; // Bekapcsoljuk a fényt
+        resistorG.style.display = "flex"; // Megjelenítjük az ellenállást
+        resText.style.display = "block";
+        
+        // (Opcionális: itt lehetne még színkód színező logikát írni, de most csak fixet raktam be demo-nak)
+    }
+
+    // Segédfüggvény: Legközelebbi szabványos ellenállás (egyszerűsített E12)
+    function getStandardResistor(val) {
+        var e12 = [10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82,
+                   100, 120, 150, 180, 220, 270, 330, 390, 470, 560, 680, 820,
+                   1000, 1200, 1500, 1800, 2200, 2700, 3300, 3900, 4700, 5600, 6800, 8200];
+        for (var i = 0; i < e12.length; i++) {
+            if (e12[i] >= val) return e12[i];
+        }
+        return Math.round(val); // Ha túl nagy, visszaadjuk a számoltat
+    }
+    
+    // Alaphelyzet
+    updateLedGraphic();
+</script>
+
+</body>
+</html>
